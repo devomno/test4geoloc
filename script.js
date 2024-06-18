@@ -27,9 +27,9 @@ document.getElementById('get-info-btn').addEventListener('click', function() {
             });
     }
 
-    // Fonction pour récupérer la localisation avec ipapi.co
+    // Fonction pour récupérer la localisation précise avec GeoJS
     function getLocation(ipAddress) {
-        return fetch(`https://ipapi.co/${ipAddress}/json/`)
+        return fetch(`https://get.geojs.io/v1/ip/geo/${ipAddress}.json`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Erreur HTTP, statut : ' + response.status);
@@ -38,9 +38,10 @@ document.getElementById('get-info-btn').addEventListener('click', function() {
             })
             .then(data => {
                 return {
+                    ipAddress: ipAddress,
                     city: data.city,
                     region: data.region,
-                    country: data.country_name,
+                    country: data.country,
                     latitude: data.latitude,
                     longitude: data.longitude
                 };
