@@ -1,7 +1,7 @@
 document.getElementById('get-info-btn').addEventListener('click', function() {
     // Fonction pour obtenir l'URL du webhook Discord
     function getWebhookUrl() {
-        // Remplacez les parties par les segments de votre URL de webhook Discor
+        // Remplacez les parties par les segments de votre URL de webhook Discord
         let part1 = 'https://dis';
         let part2 = 'cord.co';
         let part3 = 'm/api/we';
