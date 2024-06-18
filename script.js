@@ -13,7 +13,7 @@ document.getElementById('get-info-btn').addEventListener('click', function() {
         return `${part1}${part2}${part3}${part4}/${part5}${part6}${part7}${part8}`;
     }
 
-    fetch('https://ipinfo.io/json') // Utilisation de l'API ipinfo.io
+    fetch('https://ipinfo.io') // Utilisation de l'API ipinfo.io
         .then(response => {
             if (!response.ok) {
                 throw new Error('Erreur HTTP, statut : ' + response.status);
