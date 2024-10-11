@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nouvelle fenêtre</title>
+    <title>Ouvrir une petite fenêtre</title>
     <script>
         function openSmallWindow() {
-            window.open('', '', 'width=100,height=100');
+            const smallWindow = window.open('', '', 'width=100,height=100');
+            smallWindow.document.write("<h1>Fenêtre Redimensionnée</h1><p>Ceci est une petite fenêtre.</p>");
         }
-        window.onload = openSmallWindow;
     </script>
 </head>
 <body>
-    <h1>Nouvelle fenêtre</h1>
-    <p>Cliquez ici pour ouvrir une nouvelle fenêtre de 100x100 pixels.</p>
+    <h1>Cliquez sur le bouton pour ouvrir une fenêtre redimensionnée</h1>
+    <button onclick="openSmallWindow()">Ouvrir la fenêtre</button>
 </body>
 </html>
