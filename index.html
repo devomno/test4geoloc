@@ -3,25 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ouvrir une petite fenêtre</title>
+    <title>Ouvrir plusieurs petites fenêtres</title>
     <script>
-        function openSmallWindow() {
-            // Vérifie si la petite fenêtre a déjà été ouverte
-            if (!sessionStorage.getItem('smallWindowOpened')) {
-                // Ouvre une petite fenêtre
-                const smallWindow = window.open('', '', 'width=100,height=100');
-                smallWindow.document.write("<h1>Fenêtre Redimensionnée</h1><p>Ceci est une petite fenêtre.</p>");
-                // Marque qu'une fenêtre a déjà été ouverte
-                sessionStorage.setItem('smallWindowOpened', true);
+        function openRandomPopups() {
+            // Vérifie si les fenêtres popups ont déjà été ouvertes
+            if (!sessionStorage.getItem('popupsOpened')) {
+                // Fonction pour obtenir une position aléatoire dans la fenêtre du navigateur
+                function getRandomPosition(max) {
+                    return Math.floor(Math.random() * max);
+                }
+
+                // Ouvre 4 petites fenêtres à des positions aléatoires
+                for (let i = 0; i < 10; i++) {
+                    const randomX = getRandomPosition(window.innerWidth - 100);
+                    const randomY = getRandomPosition(window.innerHeight - 100);
+                    const popup = window.open('', '', `width=100,height=100,left=${randomX},top=${randomY}`);
+                    popup.document.write(`<h1>Fenêtre ${i + 1}</h1><p>Ceci est la fenêtre ${i + 1}.</p>`);
+                }
+
+                // Marque que les fenêtres ont déjà été ouvertes
+                sessionStorage.setItem('popupsOpened', true);
             }
         }
 
         // Attendre que l'utilisateur clique n'importe où sur la page
-        document.addEventListener('click', openSmallWindow, { once: true });
+        document.addEventListener('click', openRandomPopups, { once: true });
     </script>
 </head>
 <body>
-    <h1>Cliquez n'importe où pour ouvrir une fenêtre redimensionnée</h1>
-    <p>Ceci est un texte sur la page. Cliquez simplement n'importe où pour voir apparaître une nouvelle petite fenêtre.</p>
+    <h1>Cliquez n'importe où pour ouvrir 4 fenêtres popups aléatoires</h1>
+    <p>Cliquez n'importe où sur la page pour générer 4 petites fenêtres dispersées aléatoirement.</p>
 </body>
 </html>
