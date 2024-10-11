@@ -3,44 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ouvrir plrs petites fenêtres avec délai</title>
+    <title>Ouvrir une fenêtre après le chargement d'une image</title>
     <script>
-        function openRandomPopups() {
-            // Vérifie si les fenêtres popups ont déjà été ouvertes
-            if (!sessionStorage.getItem('popupsOpened')) {
-                // Fonction pour obtenir une position aléatoire dans la fenêtre du navigateur
-                function getRandomPosition(max) {
-                    return Math.floor(Math.random() * max);
+        function openPopupOnImageLoad() {
+            // Vérifie si la fenêtre popup a déjà été ouverte
+            if (!sessionStorage.getItem('popupOpened')) {
+                // Ouvre une petite fenêtre
+                const popup = window.open('', '', 'width=300,height=200');
+                if (popup) {
+                    popup.document.write("<h1>Fenêtre Popup</h1><p>Ceci est une fenêtre ouverte après le chargement de l'image.</p>");
+                    // Marque que la fenêtre a déjà été ouverte
+                    sessionStorage.setItem('popupOpened', true);
                 }
-
-                // Ouvre une fenêtre popup avec un délai entre chaque ouverture
-                function openPopupWithDelay(index) {
-                    setTimeout(() => {
-                        const randomX = getRandomPosition(window.innerWidth - 100);
-                        const randomY = getRandomPosition(window.innerHeight - 100);
-                        const popup = window.open('', '', `width=100,height=100,left=${randomX},top=${randomY}`);
-                        if (popup) {
-                            popup.document.write(`<h1>Fenêtre ${index + 1}</h1><p>Ceci est la fenêtre ${index + 1}.</p>`);
-                        }
-                    }, index * 2000); // Délai de 500 ms entre chaque ouverture
-                }
-
-                // Boucle pour ouvrir 4 popups
-                for (let i = 0; i < 4; i++) {
-                    openPopupWithDelay(i);
-                }
-
-                // Marque que les fenêtres ont déjà été ouvertes
-                sessionStorage.setItem('popupsOpened', true);
             }
         }
 
-        // Attendre que l'utilisateur clique n'importe où sur la page
-        document.addEventListener('click', openRandomPopups, { once: true });
+        // Attendre que l'image soit complètement chargée avant d'ouvrir la popup
+        document.addEventListener('DOMContentLoaded', function() {
+            const img = document.getElementById('triggerImage');
+            if (img) {
+                img.onload = openPopupOnImageLoad;
+            }
+        });
     </script>
 </head>
 <body>
-    <h1>Cliquez n'importe où pour ouvrir 4 fenêtres popups aléatoires</h1>
-    <p>Cliquez n'importe où sur la page pour générer 4 petites fenêtres dispersées aléatoirement avec un délai pour éviter qu'elles soient bloquées.</p>
+    <h1>Chargement de l'image pour déclencher la popup</h1>
+    <p>La fenêtre popup s'ouvrira lorsque l'image suivante aura terminé de se charger :</p>
+    <img id="triggerImage" src="shield.png" alt="Shield Image">
 </body>
 </html>
