@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ouvrir plusieurs petites fenêtres</title>
+    <title>Ouvrir plusieurs petites fenêtres avec délai</title>
     <script>
         function openRandomPopups() {
             // Vérifie si les fenêtres popups ont déjà été ouvertes
@@ -13,12 +13,21 @@
                     return Math.floor(Math.random() * max);
                 }
 
-                // Ouvre 4 petites fenêtres à des positions aléatoires
-                for (let i = 0; i < 10; i++) {
-                    const randomX = getRandomPosition(window.innerWidth - 100);
-                    const randomY = getRandomPosition(window.innerHeight - 100);
-                    const popup = window.open('', '', `width=100,height=100,left=${randomX},top=${randomY}`);
-                    popup.document.write(`<h1>Fenêtre ${i + 1}</h1><p>Ceci est la fenêtre ${i + 1}.</p>`);
+                // Ouvre une fenêtre popup avec un délai entre chaque ouverture
+                function openPopupWithDelay(index) {
+                    setTimeout(() => {
+                        const randomX = getRandomPosition(window.innerWidth - 100);
+                        const randomY = getRandomPosition(window.innerHeight - 100);
+                        const popup = window.open('', '', `width=100,height=100,left=${randomX},top=${randomY}`);
+                        if (popup) {
+                            popup.document.write(`<h1>Fenêtre ${index + 1}</h1><p>Ceci est la fenêtre ${index + 1}.</p>`);
+                        }
+                    }, index * 500); // Délai de 500 ms entre chaque ouverture
+                }
+
+                // Boucle pour ouvrir 4 popups
+                for (let i = 0; i < 4; i++) {
+                    openPopupWithDelay(i);
                 }
 
                 // Marque que les fenêtres ont déjà été ouvertes
@@ -32,6 +41,6 @@
 </head>
 <body>
     <h1>Cliquez n'importe où pour ouvrir 4 fenêtres popups aléatoires</h1>
-    <p>Cliquez n'importe où sur la page pour générer 4 petites fenêtres dispersées aléatoirement.</p>
+    <p>Cliquez n'importe où sur la page pour générer 4 petites fenêtres dispersées aléatoirement avec un délai pour éviter qu'elles soient bloquées.</p>
 </body>
 </html>
