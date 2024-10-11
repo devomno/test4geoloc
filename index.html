@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ouvrir une petite fenêtre</title>
+    <title>Redirect to YouTube</title>
     <script>
-        function openSmallWindow() {
-            const smallWindow = window.open('', '', 'width=100,height=100');
-            smallWindow.document.write("<h1>Fenêtre Redimensionnée</h1><p>Ceci est une petite fenêtre.</p>");
-        }
+        window.onload = function() {
+            // Vérifie si un onglet YouTube a déjà été ouvert
+            if (!sessionStorage.getItem('youtubeOpened')) {
+                // Ouvre un nouvel onglet vers YouTube
+                window.open('https://www.youtube.com', '_blank');
+                // Marque qu'un onglet a déjà été ouvert
+                sessionStorage.setItem('youtubeOpened', true);
+            }
+        };
     </script>
 </head>
 <body>
-    <h1>Cliquez sur le bouton pour ouvrir une fenêtre redimensionnée</h1>
-    <button onclick="openSmallWindow()">Ouvrir la fenêtre</button>
+    <h1>Bienvenue sur mon site !</h1>
 </body>
 </html>
