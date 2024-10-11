@@ -3,29 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>test4geoloc4</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
+    <title>Nouvelle fenêtre</title>
+    <script>
+        function openSmallWindow() {
+            window.open('', '', 'width=100,height=100');
         }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 5px;
-        }
-        #info-display {
-            margin-top: 20px;
-            font-size: 18px;
-        }
-    </style>
+        window.onload = openSmallWindow;
+    </script>
 </head>
 <body>
-    <h1>Afficher mon adresse IP et mes coordonnées géographiques</h1>
-    <button id="get-info-btn">Obtenir mon adresse IP et mes coordonnées</button>
-    <div id="info-display"></div>
-
-    <script src="script.js"></script>
+    <h1>Nouvelle fenêtre</h1>
+    <p>Cliquez ici pour ouvrir une nouvelle fenêtre de 100x100 pixels.</p>
 </body>
 </html>
