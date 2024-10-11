@@ -3,31 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ouvrir une fenêtre au déplacement du curseur</title>
+    <title>Ouvrir des popups en série</title>
     <script>
-        function openPopupOnHover() {
-            // Vérifie si la fenêtre popup a déjà été ouverte
-            if (!sessionStorage.getItem('popupOpened')) {
-                // Ouvre une petite fenêtre
-                const popup = window.open('', '', 'width=300,height=200');
+        function openMultiplePopups() {
+            // Fonction pour ouvrir une popup
+            function openPopup(index) {
+                const popup = window.open('', '', `width=200,height=100,left=${index * 100},top=${index * 100}`);
                 if (popup) {
-                    popup.document.write("<h1>Fenêtre Popup</h1><p>Ceci est une fenêtre ouverte après que le curseur est arrivé sur la page.</p>");
-                    // Marque que la fenêtre a déjà été ouverte
-                    sessionStorage.setItem('popupOpened', true);
+                    popup.document.write(`<h1>Fenêtre ${index + 1}</h1><p>Ceci est la fenêtre ${index + 1}.</p>`);
+                    popup.focus();  // Donne le focus à la fenêtre pour rendre l'ouverture plus interactive
                 }
+            }
+
+            // Ouvrir plusieurs popups en rapide succession
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => openPopup(i), i * 100); // Délai très court entre les ouvertures
             }
         }
 
-        document.addEventListener('mousemove', function triggerOnHover(event) {
-            // Déclenche l'ouverture de la popup dès que le curseur est détecté sur la page
-            openPopupOnHover();
-            // Supprime l'écouteur d'événement après le premier déclenchement
-            document.removeEventListener('mousemove', triggerOnHover);
+        // Déclencher l'ouverture au clic
+        document.addEventListener('click', function triggerOnClick() {
+            openMultiplePopups();
+            document.removeEventListener('click', triggerOnClick); // Éviter d'ouvrir plusieurs fois
+        });
+
+        // Alternative: déclenchement au mouvement du curseur
+        document.addEventListener('mousemove', function triggerOnHover() {
+            openMultiplePopups();
+            document.removeEventListener('mousemove', triggerOnHover); // Éviter d'ouvrir plusieurs fois
         });
     </script>
 </head>
 <body>
-    <h1>Déplacez votre curseur sur la page pour déclencher la fenêtre popup</h1>
-    <p>La fenêtre popup s'ouvrira lorsque vous déplacerez votre curseur sur cette page.</p>
+    <h1>Déplacez le curseur ou cliquez pour ouvrir plusieurs popups</h1>
+    <p>Les popups seront ouvertes en série, déclenchant un comportement similaire à youareanidiot.cc</p>
 </body>
 </html>
