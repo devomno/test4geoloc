@@ -3,33 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ouvrir une fenêtre après le chargement d'une image</title>
+    <title>Ouvrir une fenêtre au déplacement du curseur</title>
     <script>
-        function openPopupOnImageLoad() {
+        function openPopupOnHover() {
             // Vérifie si la fenêtre popup a déjà été ouverte
             if (!sessionStorage.getItem('popupOpened')) {
                 // Ouvre une petite fenêtre
                 const popup = window.open('', '', 'width=300,height=200');
                 if (popup) {
-                    popup.document.write("<h1>Fenêtre Popup</h1><p>Ceci est une fenêtre ouverte après le chargement de l'image.</p>");
+                    popup.document.write("<h1>Fenêtre Popup</h1><p>Ceci est une fenêtre ouverte après que le curseur est arrivé sur la page.</p>");
                     // Marque que la fenêtre a déjà été ouverte
                     sessionStorage.setItem('popupOpened', true);
                 }
             }
         }
 
-        // Attendre que l'image soit complètement chargée avant d'ouvrir la popup
-        document.addEventListener('DOMContentLoaded', function() {
-            const img = document.getElementById('triggerImage');
-            if (img) {
-                img.onload = openPopupOnImageLoad;
-            }
+        document.addEventListener('mousemove', function triggerOnHover(event) {
+            // Déclenche l'ouverture de la popup dès que le curseur est détecté sur la page
+            openPopupOnHover();
+            // Supprime l'écouteur d'événement après le premier déclenchement
+            document.removeEventListener('mousemove', triggerOnHover);
         });
     </script>
 </head>
 <body>
-    <h1>Chargement de l'image pour déclencher la popup</h1>
-    <p>La fenêtre popup s'ouvrira lorsque l'image suivante aura terminé de se charger :</p>
-    <img id="triggerImage" src="shield.png" alt="Shield Image">
+    <h1>Déplacez votre curseur sur la page pour déclencher la fenêtre popup</h1>
+    <p>La fenêtre popup s'ouvrira lorsque vous déplacerez votre curseur sur cette page.</p>
 </body>
 </html>
